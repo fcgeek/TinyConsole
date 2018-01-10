@@ -12,10 +12,10 @@ Written in Swift 3.
 
 ## Usage
 
-Pass your App-ViewController as a `rootViewController` parameter to `TinyConsole` to create the `TinyConsoleController`.
+Create a `TinyConsoleController`-Instance and pass your App-ViewController as a `rootViewController` parameter.
 
 ```swift
-TinyConsole.createViewController(rootViewController: MyMainViewController())
+TinyConsoleController(rootViewController: MyMainViewController())
 ```
 
 ### Actions
@@ -35,36 +35,15 @@ TinyConsole.addMarker()
 
 // Clear console
 TinyConsole.clear()
-
-// Set root view controller
-TinyConsole.set(rootViewController: MyViewController())
 ```
-> Calling `TinyConsole.set(rootViewController:)` will change the `rootViewController` of `TinyConsoleController` but hold the console content and gesture configurations, which means the text and gesture recognizers of the console view will remain the same.
 
 ### Gestures
-
-By default, the gestures is configured as follows:
 
 * Swipe from Left to Right: `Add marker`
 * 2 Finger Tap: `Add custom log entry`
 * 3 Finger Tap: Show Action Sheet to `Clear Console` and `Send Mail`
 * Shake to toggle the console view. If you’re using the Simulator, press <kbd>⌃ ctrl</kbd>-<kbd>⌘ cmd</kbd>-<kbd>z</kbd>.
 
-To customize the gestures, specify `withDefaultGestureConfiguration` as `false`
-
-```swift
-TinyConsole.createViewController(rootViewController: MyMainViewController(), withDefaultGestureConfiguration: false)
-
-```
-
-and add your own gesture recognizers
-
-```swift
-let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(consoleTapped))
-TinyConsole.addGestureRecognizer(tapGestureRecognizer)
-```
-
-> Calling `TinyConsole.useDefaultGestureConfiguration()` will remove all gesture recognizers from console view and add the default gesture recognizers.
 
 ## Implementation Example
 
@@ -84,7 +63,7 @@ write
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     window = UIWindow(frame: UIScreen.main.bounds)
-    window?.rootViewController = TinyConsole.createViewController(rootViewController: MyMainViewController())
+    window?.rootViewController = TinyConsoleController(rootViewController: MainViewController())
     window?.makeKeyAndVisible()
     return true
 }

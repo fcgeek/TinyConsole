@@ -20,14 +20,14 @@ open class TinyConsoleController: UIViewController {
     }
     
     // MARK: - Private Properties -
-    var rootViewController: UIViewController {
+    private var rootViewController: UIViewController
+    public weak var delegate: TinyConsoleViewControllerDelegate? {
         didSet {
-            setupViewControllers()
-            setupConstraints()
+            consoleViewController.delegate = delegate
         }
     }
     
-    var consoleViewController: TinyConsoleViewController = {
+    private var consoleViewController: TinyConsoleViewController = {
         return TinyConsoleViewController()
     }()
     
@@ -59,15 +59,8 @@ open class TinyConsoleController: UIViewController {
     }
     
     // MARK: - Initializer -
-    @available(*,deprecated, message: "use TinyConsole.createViewController instead")
     public init(rootViewController: UIViewController) {
         self.rootViewController = rootViewController
-        super.init(nibName: nil, bundle: nil)
-        TinyConsole.shared.consoleController = self
-    }
-    
-    init(){
-        self.rootViewController = UIViewController()
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -78,14 +71,19 @@ open class TinyConsoleController: UIViewController {
     }
     
     // MARK: - Public Methods -
-    public var isExpanded: Bool {
-        return consoleWindowMode == .expanded
-    }
-    
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        setupViewControllers()
+        addChildViewController(consoleViewController)
+        consoleViewController.view.frame = consoleFrame
+        view.addSubview(consoleViewController.view)
+        consoleViewController.didMove(toParentViewController: self)
+        
+        addChildViewController(rootViewController)
+        rootViewController.view.frame = CGRect(x: consoleFrame.minX, y: consoleFrame.maxY, width: view.bounds.width, height: 120)
+        view.addSubview(rootViewController.view)
+        rootViewController.didMove(toParentViewController: self)
+        
         setupConstraints()
     }
     
@@ -99,25 +97,6 @@ open class TinyConsoleController: UIViewController {
     }
     
     // MARK: - Private Methods -
-    private func setupViewControllers(){
-        for view in view.subviews {
-            view.removeFromSuperview()
-        }
-        for childViewController in childViewControllers {
-            childViewController.removeFromParentViewController()
-        }
-        
-        addChildViewController(consoleViewController)
-        consoleViewController.view.frame = consoleFrame
-        view.addSubview(consoleViewController.view)
-        consoleViewController.didMove(toParentViewController: self)
-        
-        addChildViewController(rootViewController)
-        rootViewController.view.frame = CGRect(x: consoleFrame.minX, y: consoleFrame.maxY, width: view.bounds.width, height: 120)
-        view.addSubview(rootViewController.view)
-        rootViewController.didMove(toParentViewController: self)
-    }
-    
     private func setupConstraints() {
         
         rootViewController.view.attach(anchor: .top, to: view)
